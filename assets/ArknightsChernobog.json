@@ -3,7 +3,7 @@
   "name": "苦难摇篮",
   "author": "Natsuki",
   "description": "以《明日方舟》主线第七章“苦难摇篮”为主题的第二幕变体，与原版蜂巢随机出现；装有 ActLikeIt2 时改为在第二幕开始前与蜂巢一同供选择。",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "min_game_version": "0.111.0",
   "has_pck": true,
   "has_dll": true,

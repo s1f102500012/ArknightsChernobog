@@ -68,6 +68,8 @@ def build_kinds() -> dict:
             # 与游戏里一致：召来的战士起手用场上第一只战士本回合出的招。
             kw["summon_start"] = lambda mons, kind: next((m.history[-1] for m in mons if m.kind == kind and m.history),
                                                          M[kind][1][0][0])
+            # 增援槽在传令兵组长的槽前面，原版按槽位重排后召来的战士先于组长出手（战旗叠的领袖气质只影响下回合的意图）。
+            kw["summon_front"] = True
         kinds[name] = (random_kind if mode == "random" else cycle)(list(moves), **kw)
     return kinds
 
@@ -108,7 +110,7 @@ OPENINGS = {
     "普|狂暴宿主": {"狂暴宿主士兵": 1},
     "普|特战分队": (2, 2, 0),
     "普|游击队突击组": (2, 0, 2),
-    "普|狙击阵地": (0, 2, 1),
+    "普|狙击阵地": (1, 2, 1),
     "普|炮击阵地": (1, 0),
     "普|浸染": (2, 2),
     "普|空降小队": (0, 1),

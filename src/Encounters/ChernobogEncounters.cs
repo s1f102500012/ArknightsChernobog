@@ -170,7 +170,11 @@ public sealed class ReunionAssaultSquadNormal : ReunionEncounter
 	protected override void ConfigureMonsters(IReadOnlyList<MonsterModel> monsters) => SetOpenings(monsters, 2, 0, 2);
 }
 
-/// <summary>7-5 并肩之约：狙击阵地，狙击手组长带两名狙击手，标定目标给玩家易伤（组长站最右、最后出手并先标定目标，易伤从第 2 回合起吃满；第二名狙击手先瞄准）。</summary>
+/// <summary>
+/// 7-5 并肩之约：狙击阵地，狙击手组长带两名狙击手，标定目标给玩家易伤。组长站最右、最后出手并先标定目标：
+/// 新挂到玩家身上的易伤跳过第一次掉层，第 1 回合挂上后整个第 2 回合都吃加成，所以第一名狙击手从第二发狙击起手、
+/// 第 2 回合轮到瞄准，避开同回合三发都吃易伤；第二名狙击手先瞄准。
+/// </summary>
 public sealed class ReunionSniperNestNormal : ReunionEncounter
 {
 	public override RoomType RoomType => RoomType.Monster;
@@ -178,7 +182,7 @@ public sealed class ReunionSniperNestNormal : ReunionEncounter
 	protected override IReadOnlyList<MonsterModel> Lineup =>
 		[M<ReunionGuerrillaSniper>(), M<ReunionGuerrillaSniper>(), M<ReunionGuerrillaSniperLeader>()];
 
-	protected override void ConfigureMonsters(IReadOnlyList<MonsterModel> monsters) => SetOpenings(monsters, 0, 2, 1);
+	protected override void ConfigureMonsters(IReadOnlyList<MonsterModel> monsters) => SetOpenings(monsters, 1, 2, 1);
 }
 
 /// <summary>7-13/7-14 炮击阵地：盾卫掩护迫击炮兵（照原版活体盾牌 + 高塔炮手），不先拆盾卫炮兵每回合都有格挡（盾卫先盾击，炮兵先装填）。</summary>

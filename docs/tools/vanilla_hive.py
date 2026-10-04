@@ -32,13 +32,13 @@ K = {
                 {"LAY": "SMASH", "PASTE": "SMASH", "SMASH": "TENDERIZER",
                  # CanLay：存活的己方（含自己）≤3 只才下蛋，否则吃营养糊加力量。
                  "TENDERIZER": lambda m, w: "LAY" if len(w) <= 3 else "PASTE"},
-                summon_cap=5),
+                summon_cap=5, summon_front=True),  # 蛋槽 egg1–5 在卵翼虫槽前面
     "坚硬虫卵": Kind({"HATCH": Move(), "NIBBLE": Move(V(4, 5), 1)}, {"HATCH": "NIBBLE", "NIBBLE": "NIBBLE"}),
     "沉睡甲虫": Kind({"SNORE": Move(), "ROLL_OUT": Move(V(16, 18), 1, self_str=V(2))},
                  # 沉睡 3 层，每个敌方回合结束掉 1 层，归零醒来；玩家不打它，所以睡满 3 回合。
                  {"SNORE": lambda m, w: "SNORE" if len(m.history) < 3 else "ROLL_OUT", "ROLL_OUT": "ROLL_OUT"}),
     "窥视者": Kind({"ILLUSION": Move(summon="惊惧幻影"), "GAZE": Move(V(10, 11), 1), "WAIL": Move(team_str=V(3)),
-                 "HARDENING": Move(V(6, 7), 1)}, {}, summon_cap=1),
+                 "HARDENING": Move(V(6, 7), 1)}, {}, summon_cap=1, summon_front=True),  # 槽位 illusion 在 obscura 前面
     "惊惧幻影": cycle([("SLAM", Move(V(16, 17), 1))]),
     # —— 精英 ——
     "虫群术士": Kind({"BEES": Move(V(3), 7), "SPEAR": Move(V(18, 20), 1), "SPIT": Move(self_str=V(1))},

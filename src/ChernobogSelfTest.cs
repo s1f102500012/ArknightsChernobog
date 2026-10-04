@@ -228,6 +228,8 @@ internal static class ChernobogSelfTest
 			Require(herald.OpeningStateId == ReunionGuerrillaHeraldLeader.CallReinforcementsMoveId, $"opening {herald.OpeningStateId}");
 			Require(herald.MoveStateMachine!.States.ContainsKey("REINFORCE_BRANCH_STATE"), "no reinforce branch");
 			Require(herald.MoveStateMachine.States.ContainsKey(ReunionGuerrillaHeraldLeader.RallyMoveId), "no rally fallback");
+			// 战旗叠领袖气质只在组长最后出手时不改变已亮出的意图：原版按槽位顺序重排敌方列表，组长必须占最后一个槽。
+			Require(ReunionGuerrillaHeraldLeader.FormationSlots[^1] == ReunionGuerrillaHeraldLeader.HeraldSlot, "herald is not the last slot");
 
 			// 召唤靠遭遇战场景里的同名 Marker2D 定位；缺一个，NCombatRoom.AddCreature 就会在召唤时抛异常。
 			List<string> checkedScenes = [];

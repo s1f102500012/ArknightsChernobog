@@ -15,7 +15,9 @@ namespace ArknightsChernobog.Monsters;
 /// 游击队传令兵组长（PRTS enemy_1080_sotidp_2），传令兵的头目版。PRTS 定位：在场时强化所有敌军的攻击力与防御力。
 /// 与本体同一套骨骼和动画（附件网格随贴图重新打包，skel 单独转换）：Idle / Attack（OnAttack 0.4s）/ Die；Move 未用。
 /// 招式与数值见 docs/战斗设计.md：召唤型（照原版卵翼虫）。开场原版“领袖气质”；呼叫增援（召来一名游击队战士）→ 殴打 → 战旗
-/// （给自己再叠领袖气质，加的是其他盟友的攻击；它站最后一个槽、最后出手，叠上时同伴本回合都出过手，不会让已亮出的意图涨伤害）
+/// （给自己再叠领袖气质，加的是其他盟友的攻击；它站最后一个槽、最后出手，叠上时同伴本回合都出过手，不会让已亮出的意图涨伤害。
+/// 召来的增援也在它之前出手：原版 CombatManager.AddCreature 按遭遇战槽位重排敌方列表，增援槽排在 <see cref="HeraldSlot"/> 前面，
+/// 所以 <see cref="FormationSlots"/> 必须以 <see cref="HeraldSlot"/> 结尾）
 /// → 遭遇战还有空槽时再呼叫增援，没有了改为号令（全体格挡）。
 /// 站位也照卵翼虫：遭遇战用 <see cref="FormationSlots"/> 预留槽位（场景里有同名 Marker2D），召唤进
 /// EncounterModel.GetNextSlot 给出的第一个空槽，已有怪物不移动；遭遇战没有槽位时不召唤。召来的战士与场上战士错开起手（见 <see cref="RecruitOpening"/>）。
