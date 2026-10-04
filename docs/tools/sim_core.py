@@ -3,7 +3,7 @@
 口径：
 - 玩家不出格挡、不打怪、不死怪，只算前 N 个敌方回合每回合玩家要承受的攻击伤害。
 - 难度 0 = A0（无进阶），1 = A10（含“更强的敌人”A8 与“更致命的敌人”A9）。数值写成 (A0, A10)。
-- 攻击伤害 =（基础 + 自身力量 + 其他盟友的领袖气质）× 段数；玩家带易伤时每段 ×1.5 向下取整。
+- 攻击伤害 =（基础 + 自身力量 + 其他盟友的领袖气质（开场层数 + 招式叠加的层数））× 段数；玩家带易伤时每段 ×1.5 向下取整。
   易伤层数叠加，在敌方回合结束时掉 1 层（与原版“玩家回合结束掉层”对敌方出伤等价）。
 - 出手顺序 = 阵容顺序；召唤的怪排在队尾，从下一个敌方回合起出手（原版刚召唤的怪当回合不行动）。
 - 随机分支照原版 RandomBranchState：按权重在允许的招里抽；rep=1 是“不能连用”，rep=n 是“最多连用 n 次”，rep=0 不限。
@@ -12,7 +12,7 @@
 """
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Callable, Union
 
 
@@ -27,6 +27,7 @@ class Move:
     hits: int = 0
     self_str: tuple = (0, 0)
     team_str: tuple = (0, 0)  # 全体盟友（含自己）加力量，原版 GetTeammatesOf 含自身。
+    self_lead: tuple = (0, 0)  # 给自己叠领袖气质（加给其他盟友的攻击，不加自己）
     vuln: int = 0
     summon: str | None = None  # 召唤的怪物种类
     summon_count: int = 1
@@ -70,6 +71,7 @@ class Mon:
     strength: int = 0
     start: int = 0
     summoned: int = 0
+    lead: int = 0  # 招式叠加的领袖气质（开场层数在 Kind.leadership）
 
 
 def _branch(kinds: dict, mon: Mon, world: tuple, nxt: Next) -> list[tuple[float, str]]:
@@ -118,14 +120,14 @@ def _turn(kinds, mons, vuln, t, asc):
         mv = kind.moves[m.state]
         mons = list(mons)
         if mv.hits:
-            lead = sum(kinds[o.kind].leadership[asc] for j, o in enumerate(mons) if j != i and o.start <= t)
+            lead = sum(kinds[o.kind].leadership[asc] + o.lead for j, o in enumerate(mons) if j != i and o.start <= t)
             per = mv.dmg[asc] + m.strength + lead
             if vuln > 0:
                 per = int(per * 1.5)
             total += max(0, per) * mv.hits
         strength = m.strength + mv.self_str[asc]
         if mv.team_str[asc]:
-            mons = [o if j == i else Mon(o.kind, o.state, o.history, o.strength + mv.team_str[asc], o.start, o.summoned)
+            mons = [o if j == i else replace(o, strength=o.strength + mv.team_str[asc])
                     for j, o in enumerate(mons)]
             strength += mv.team_str[asc]
         vuln += mv.vuln
@@ -138,12 +140,12 @@ def _turn(kinds, mons, vuln, t, asc):
                 sk = kinds[mv.summon]
                 first = kind.summon_start(mons, mv.summon) if kind.summon_start else next(iter(sk.moves))
                 mons.append(Mon(mv.summon, first, (), 0, t + 1))
-        acted = Mon(m.kind, m.state, m.history + (m.state,), strength, m.start, summoned)
+        acted = replace(m, history=m.history + (m.state,), strength=strength, summoned=summoned, lead=m.lead + mv.self_lead[asc])
         mons[i] = acted
         world = tuple(mons)
         for q, state in _branch(kinds, acted, world, kind.next[m.state]):
             mons2 = list(mons)
-            mons2[i] = Mon(acted.kind, state, acted.history, acted.strength, acted.start, acted.summoned)
+            mons2[i] = replace(acted, state=state)
             step(k + 1, mons2, vuln, total, p * q)
 
     step(0, mons, vuln, 0, 1.0)

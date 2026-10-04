@@ -31,9 +31,9 @@ public sealed class ReunionHostScavenger : ReunionHostMonster
 
 	public override IReadOnlyList<string> RequiredAnimations => ["Idle", "Attack", "Die"];
 
-	public override int MinInitialHp => ToughValue(47, 44);
+	public override int MinInitialHp => ToughValue(41, 38);
 
-	public override int MaxInitialHp => ToughValue(51, 48);
+	public override int MaxInitialHp => ToughValue(45, 42);
 
 	public override DamageSfxType TakeDamageSfxType => DamageSfxType.Fur;
 
@@ -41,9 +41,9 @@ public sealed class ReunionHostScavenger : ReunionHostMonster
 
 	private int RendDamage => DeadlyValue(6, 5);
 
-	protected override int HostRegen => 2;
+	protected override int HostRegen => 3;
 
-	protected override int ReviveHp => ToughValue(20, 18);
+	protected override int ReviveHp => ToughValue(18, 16);
 
 	protected override MonsterMoveStateMachine GenerateMoveStateMachine()
 	{

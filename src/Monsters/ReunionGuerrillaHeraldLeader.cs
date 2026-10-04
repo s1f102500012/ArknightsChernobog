@@ -15,7 +15,8 @@ namespace ArknightsChernobog.Monsters;
 /// 游击队传令兵组长（PRTS enemy_1080_sotidp_2），传令兵的头目版。PRTS 定位：在场时强化所有敌军的攻击力与防御力。
 /// 与本体同一套骨骼和动画（附件网格随贴图重新打包，skel 单独转换）：Idle / Attack（OnAttack 0.4s）/ Die；Move 未用。
 /// 招式与数值见 docs/战斗设计.md：召唤型（照原版卵翼虫）。开场原版“领袖气质”；呼叫增援（召来一名游击队战士）→ 殴打 → 战旗
-/// （玩家虚弱；不给同伴加力量，召来的战士排在它后面出手，会让本回合已亮出的意图涨伤害）→ 遭遇战还有空槽时再呼叫增援，没有了改为号令（全体格挡）。
+/// （给自己再叠领袖气质，加的是其他盟友的攻击；它站最后一个槽、最后出手，叠上时同伴本回合都出过手，不会让已亮出的意图涨伤害）
+/// → 遭遇战还有空槽时再呼叫增援，没有了改为号令（全体格挡）。
 /// 站位也照卵翼虫：遭遇战用 <see cref="FormationSlots"/> 预留槽位（场景里有同名 Marker2D），召唤进
 /// EncounterModel.GetNextSlot 给出的第一个空槽，已有怪物不移动；遭遇战没有槽位时不召唤。召来的战士与场上战士错开起手（见 <see cref="RecruitOpening"/>）。
 /// 战士（开场的和召来的）不挂“爪牙”：传令兵组长倒下后它们留在场上，要全部打完才结束战斗。
@@ -38,19 +39,20 @@ public sealed class ReunionGuerrillaHeraldLeader : ReunionMonster
 
 	public override IReadOnlyList<string> RequiredAnimations => ["Idle", "Attack", "Die"];
 
-	public override int MinInitialHp => ToughValue(108, 104);
+	public override int MinInitialHp => ToughValue(104, 100);
 
-	public override int MaxInitialHp => ToughValue(112, 108);
+	public override int MaxInitialHp => ToughValue(108, 104);
 
 	public override DamageSfxType TakeDamageSfxType => DamageSfxType.Fur;
 
 	private int LeadershipAmount => DeadlyValue(3, 2);
 
-	private int StrikeDamage => DeadlyValue(9, 8);
+	private int StrikeDamage => DeadlyValue(6, 5);
 
 	private int RallyBlock => ToughValue(10, 9);
 
-	private const int BannerWeak = 2;
+	/// <summary>战旗每次再叠的领袖气质。</summary>
+	private int ExtraLeadershipAmount => DeadlyValue(2, 1);
 
 	/// <summary>遭遇战里下一个空槽；没有槽位或已站满时为 null。</summary>
 	private string? FreeSlot => CombatState.Encounter?.GetNextSlot(CombatState) is { Length: > 0 } slot ? slot : null;
@@ -65,7 +67,7 @@ public sealed class ReunionGuerrillaHeraldLeader : ReunionMonster
 	{
 		MoveState call = new(CallReinforcementsMoveId, CallReinforcementsMove, new SummonIntent());
 		MoveState strike = new(StrikeMoveId, StrikeMove, new SingleAttackIntent(StrikeDamage));
-		MoveState banner = new(BannerMoveId, BannerMove, new DebuffIntent());
+		MoveState banner = new(BannerMoveId, BannerMove, new BuffIntent());
 		MoveState rally = new(RallyMoveId, RallyMove, new DefendIntent());
 		ConditionalBranchState next = new("REINFORCE_BRANCH_STATE");
 		call.FollowUpState = strike;
@@ -126,7 +128,7 @@ public sealed class ReunionGuerrillaHeraldLeader : ReunionMonster
 	{
 		SfxCmd.Play(BuffSfx);
 		await CreatureCmd.TriggerAnim(Creature, CreatureAnimator.attackTrigger, 0.4f);
-		await ApplyPower<WeakPower>(targets, BannerWeak);
+		await ApplyPower<LeadershipPower>([Creature], ExtraLeadershipAmount);
 	}
 
 	public override CreatureAnimator GenerateAnimator(MegaSprite controller)

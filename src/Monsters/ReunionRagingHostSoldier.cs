@@ -13,7 +13,7 @@ namespace ArknightsChernobog.Monsters;
 /// 狂暴宿主士兵（PRTS enemy_1062_rager），失去控制后的宿主（7-3 “残余的狂暴宿主”）。
 /// PRTS 定位：逐渐陷入狂乱的敌方士兵，攻击力很高，会持续损失生命。
 /// 动画：Idle / Attack（OnAttack 0.667s）/ Die；Move 未用。
-/// 招式与数值见 docs/战斗设计.md（初版）：血比普通宿主薄、伤害更高，原版“瓦解”层数翻倍；狂斩（三段）、撕裂、狂嚎（自身力量 + 玩家虚弱）三招随机、不连用（照原版猎杀者）。
+/// 招式与数值见 docs/战斗设计.md（初版）：血比普通宿主薄、伤害更高，原版“瓦解”9 层（比投掷手的 14 低，自损慢、要多撑几回合）；狂斩（三段）、撕裂、狂嚎（自身力量 + 玩家虚弱）三招随机、不连用（照原版猎杀者）。
 /// </summary>
 public sealed class ReunionRagingHostSoldier : ReunionMonster
 {
@@ -23,7 +23,7 @@ public sealed class ReunionRagingHostSoldier : ReunionMonster
 
 	private const int RoarWeak = 1;
 
-	private const int LossOfControl = 14;
+	private const int LossOfControl = 9;
 	private const int FrenzyHits = 3;
 
 	public override string SceneName => "reunion_raging_host_soldier";

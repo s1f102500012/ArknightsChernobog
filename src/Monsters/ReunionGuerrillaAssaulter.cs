@@ -51,7 +51,7 @@ public sealed class ReunionGuerrillaAssaulter : ReunionMonster
 
 	public override DamageSfxType TakeDamageSfxType => DamageSfxType.Armor;
 
-	private int DiveDamage => DeadlyValue(17, 16);
+	private int DiveDamage => DeadlyValue(16, 14);
 
 	private int TakeOffStrength => DeadlyValue(3, 2);
 

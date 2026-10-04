@@ -38,9 +38,9 @@ public sealed class ReunionHostWanderer : ReunionHostMonster
 
 	private int SnarlStrength => DeadlyValue(3, 2);
 
-	private int LurchDamage => DeadlyValue(7, 6);
+	private int LurchDamage => DeadlyValue(6, 5);
 
-	protected override int HostRegen => 3;
+	protected override int HostRegen => 2;
 
 	protected override int ReviveHp => ToughValue(24, 22);
 

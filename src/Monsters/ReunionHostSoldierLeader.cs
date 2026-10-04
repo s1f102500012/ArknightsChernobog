@@ -28,13 +28,13 @@ public sealed class ReunionHostSoldierLeader : ReunionHostMonster
 
 	public override IReadOnlyList<string> RequiredAnimations => ["Idle", "Attack", "Die"];
 
-	public override int MinInitialHp => ToughValue(47, 44);
+	public override int MinInitialHp => ToughValue(43, 40);
 
-	public override int MaxInitialHp => ToughValue(51, 48);
+	public override int MaxInitialHp => ToughValue(47, 44);
 
 	public override DamageSfxType TakeDamageSfxType => DamageSfxType.Fur;
 
-	private int HackDamage => DeadlyValue(9, 8);
+	private int HackDamage => DeadlyValue(7, 6);
 
 	private int DoubleSlashDamage => DeadlyValue(5, 4);
 
